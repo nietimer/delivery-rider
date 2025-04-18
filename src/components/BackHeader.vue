@@ -4,10 +4,11 @@
             @click="routerBack">
             <path fill="currentColor" fill-rule="evenodd" d="M31 38.32L13.391 21L31 3.68L28.279 1L8 21.01L28.279 41z" />
         </svg>
-        <div style="flex: 1;text-align: center;">
+        <div style="flex: 1;text-align: center;transform: translateX(-15px);z-index: -1;">
             <slot></slot>
         </div>
     </div>
+    <div style="width: 100%;height: 44px;"></div>
 </template>
 
 <script setup>
@@ -31,5 +32,8 @@ const routerBack = () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
 }
 </style>

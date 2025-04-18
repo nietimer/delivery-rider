@@ -1,16 +1,17 @@
 <template>
+    <img src="../assets/img/login-header.png" alt="logo" class="login-logo"></img>
     <div class="login-container">
         <div class="login-header">
             <h1>骑手登录</h1>
         </div>
         <form @submit.prevent="handleLogin" class="login-form">
             <div class="form-group">
-                <label for="phone">手机号</label>
-                <input type="tel" id="phone" v-model="form.phone" placeholder="请输入手机号" required>
+                <label for="phone">用户名</label>
+                <input type="tel" id="phone" v-model="form.userName" placeholder="请输入用户名" required>
             </div>
             <div class="form-group">
                 <label for="password">密码</label>
-                <input type="password" id="password" v-model="form.password" placeholder="请输入密码" required>
+                <input type="password" id="password" v-model="form.password" placeholder="请输入密码" required autocomplete>
             </div>
             <button type="submit" class="login-btn">登录</button>
         </form>
@@ -23,27 +24,47 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { login } from '../request/login'
+import { useUserStore } from '../../stores/user'
+import { useOrderStore } from '../../stores/order'
 
+const { setLoginUserInfo } = useUserStore()
+const { setOrderNumber } = useOrderStore()
 const router = useRouter()
 const form = ref({
-    phone: '',
+    userName: '',
     password: ''
 })
 
-const handleLogin = () => {
-    if (form.value.phone && form.value.password) {
-        localStorage.setItem('riderToken', 'mock-token')
-        router.push('/delivery')
+const handleLogin = async () => {
+    if (form.value.userName && form.value.password) {
+        const data = await login(form.value.userName, form.value.password)
+        if (data) {
+            localStorage.setItem('riderToken', JSON.stringify(data))
+            setLoginUserInfo({
+                userId: data.id,
+                userName: data.user_name,
+                userTel: data.phone,
+                userMoney: Number(data.balance),
+                userCampusId: data.campus_id,
+                userCampusName: data.campus_name,
+            })
+            setOrderNumber(Number(data.responsible), 0)
+            router.push('/delivery')
+        }
     }
 }
 </script>
 
 <style scoped>
+.login-logo {
+    width: 100%;
+}
+
 .login-container {
     padding: 20px;
     max-width: 400px;
-    margin: 0 auto;
-    height: 100vh;
+    margin: 40px auto 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;

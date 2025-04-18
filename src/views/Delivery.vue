@@ -20,18 +20,18 @@
 
         <div class="tabs">
             <button v-for="tab in tabs" :key="tab.id" :class="{ active: activeTab === tab.id }"
-                @click="() => { activeTab = tab.id; noMoreData = false }">
+                @click="() => { activeTab = tab.id; noMoreData = false; }">
                 {{ tab.label }}
             </button>
         </div>
 
         <div class="delivery-list" ref="listContainer">
-            <DeliveryCard v-for="order in filteredOrders" :key="order.id" :order="order" @accept="handleAcceptOrder"
+            <DeliveryCard v-for="order in filteredOrders" :key="order.id" :order="order"
                 @complete="handleCompleteOrder" />
 
             <!-- 加载状态指示器 -->
             <div v-if="loading" class="loading-indicator">
-                加载中...
+                加载中<span class="loader"></span>
             </div>
             <div v-if="noMoreData" class="no-more-data">
                 没有更多数据了
@@ -44,12 +44,11 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import DeliveryCard from '../components/DeliveryCard.vue'
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '../../stores/user'
 import { useOrderStore } from '../../stores/order'
+import { orderConfirm } from '../request/order'
 
 const orderStore = useOrderStore()
-const { completeOrder, ongoingOrder } = storeToRefs(useUserStore())
-const { orders } = storeToRefs(orderStore)
+const { orders, completeOrder, ongoingOrder } = storeToRefs(orderStore)
 const { fetchMoreOrders } = orderStore
 const activeTab = ref('ongoing')
 const tabs = ref([
@@ -66,20 +65,14 @@ const filteredOrders = computed(() => {
     return orders.value.filter(order => order.status === activeTab.value)
 })
 
-const handleAcceptOrder = (orderId) => {
-    const order = orders.value.find(o => o.id === orderId)
-    if (order) {
-        order.status = 'ongoing'
-        ongoingOrder.value++
-    }
-}
-
 const handleCompleteOrder = (orderId) => {
     const order = orders.value.find(o => o.id === orderId)
     if (order) {
         order.status = 'completed'
-        ongoingOrder.value--
-        completeOrder.value++
+        orderConfirm(orderId).then(() => {
+            ongoingOrder.value--
+            completeOrder.value++
+        })
     }
 }
 
@@ -95,7 +88,6 @@ const checkScroll = () => {
 // 加载更多数据
 const loadMoreData = async () => {
     loading.value = true
-    console.log('加载更多数据...')
     try {
         // 假设你的orderStore有一个fetchMoreOrders方法来获取更多数据
         const hasMore = await fetchMoreOrders(activeTab.value)
@@ -111,7 +103,8 @@ const loadMoreData = async () => {
 onMounted(() => {
     listContainer.value.addEventListener('scroll', checkScroll)
     // 初始加载数据
-    loadMoreData()
+    fetchMoreOrders("ongoing")
+    fetchMoreOrders("completed")
 })
 
 // 移除滚动事件监听
@@ -198,5 +191,30 @@ onUnmounted(() => {
     text-align: center;
     padding: 10px;
     color: #999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.loader {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #999;
+    border-bottom-color: #FF3D00;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>

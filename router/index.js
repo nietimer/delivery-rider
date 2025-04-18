@@ -1,10 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import Login from '../src/views/Login.vue'
 import Delivery from '../src/views/Delivery.vue'
 import Profile from '../src/views/profile/index.vue'
 import ProfileInfo from '../src/views/profile/Info.vue'
 import Withdrawal from '../src/views/profile/Withdrawal.vue'
 import OrderDetails from '../src/views/OrderDetails.vue'
+import { useUserStore } from '../stores/user'
 
 const routes = [
     {
@@ -46,7 +47,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createMemoryHistory(),
     routes
 })
 

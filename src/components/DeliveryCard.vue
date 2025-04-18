@@ -11,14 +11,14 @@
             </div>
             <div class="customer-info">
                 <p>送至: {{ order.customer }} ({{ order.address }})</p>
-                <p>距离: {{ order.distance }} | 配送费: ¥{{ order.fee }}</p>
+                <p> 配送费: ¥{{ order.fee }}</p>
             </div>
         </div>
         <div class="card-actions" v-if="showActions">
             <button class="action-btn complete" @click="$emit('complete', order.id)" v-if="order.status === 'ongoing'">
                 完成
             </button>
-            <a class="action-btn call" :href="`tel:${ order.userTel }`">
+            <a class="action-btn call" :href="`tel:${order.userTel}`">
                 联系客户
             </a>
         </div>
@@ -28,7 +28,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useOrderStore } from '../../stores/order'
 
+const { orderInfo, orderItems, deliveryStatus, estimatedDeliveryTime, deliveryAddress, contactInfo, } = storeToRefs(useOrderStore())
 const router = useRouter()
 
 const props = defineProps({
@@ -42,7 +45,7 @@ const emit = defineEmits(['complete'])
 
 const statusText = computed(() => {
     const statusMap = {
-        'pending': '待接单',
+        // 'pending': '待接单',
         'ongoing': '配送中',
         'completed': '已完成'
     }
@@ -54,7 +57,50 @@ const cardClass = computed(() => `status-${props.order.status}`)
 const showActions = computed(() => props.order.status !== 'completed')
 
 const toOrderDetails = () => {
-    router.push(`/orderDetails`)
+    // const statusMap = {
+    //     // 'pending': '待接单',
+    //     'ongoing': '配送中',
+    //     'completed': '已完成'
+    // }
+    // orderInfo.value = {
+    //     orderNo: props.order.orderNo,
+    //     createTime: '2023-04-18 11:30:25',
+    //     totalAmount: 68.50,
+    //     remark: '请尽快送达，谢谢！'
+    // }
+    // orderItems.value = [
+    //     {
+    //         name: '香辣鸡腿堡套餐',
+    //         spec: '中杯可乐+薯条',
+    //         price: 32.00,
+    //         quantity: 1
+    //     },
+    //     {
+    //         name: '新奥尔良烤鸡腿堡',
+    //         spec: '单点',
+    //         price: 18.50,
+    //         quantity: 1
+    //     },
+    //     {
+    //         name: '鸡米花',
+    //         spec: '大份',
+    //         price: 12.00,
+    //         quantity: 1
+    //     }
+    // ]
+    // deliveryStatus.value = statusMap[props.order.status]
+    // estimatedDeliveryTime.value = '今天 12:30-13:00'
+    // deliveryAddress.value = props.order.address
+    // contactInfo.value = {
+    //     name: props.order.customer,
+    //     phone: '13823451234'
+    // }
+    // router.push(`/orderDetails`)
+    ElMessage({
+        message: "暂无更多详细信息",
+        type: 'warning',
+        duration: 4000
+    })
 }
 </script>
 

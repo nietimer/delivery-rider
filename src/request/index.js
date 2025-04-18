@@ -210,13 +210,25 @@ class HttpClient {
 
 // 使用示例
 const http = new HttpClient({
-    baseURL: 'https://www.baidu.com',
+    baseURL: '/api',
     headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer your-token'
     },
     timeout: 5000
 });
+
+http.addResponseInterceptor(response => {
+    // console.log('Response interceptor:', response)
+    if (response.data.code !== 200) {
+        ElMessage({
+            message: response.data.msg,
+            type: 'warning',
+            duration: 4000
+        })
+    }
+    return response.data
+})
 
 
 export default http;

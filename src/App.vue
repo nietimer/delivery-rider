@@ -9,7 +9,32 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavBar from './components/NavBar.vue'
+import { useUserStore } from '../stores/user'
 
+const { setLoginUserInfo } = useUserStore()
+try {
+  const data = JSON.parse(localStorage.getItem('riderToken'))
+  if (data) {
+    setLoginUserInfo({
+      userId: data.id,
+      userName: data.user_name,
+      userTel: data.phone,
+      userMoney: Number(data.balance),
+      userCampusId: data.campus_id,
+      userCampusName: data.campus_name,
+      completeOrder: Number(data.responsible),
+      ongoingOrder: 0
+    })
+  }
+} catch (error) {
+  localStorage.removeItem('riderToken')
+  ElMessage({
+    message: "登录已失效，请重新登录",
+    type: 'warning',
+    duration: 4000
+  })
+  console.log(error)
+}
 const showNavArray = ['/delivery', '/profile']
 const route = useRoute()
 const showNav = computed(() => showNavArray.includes(route.path))

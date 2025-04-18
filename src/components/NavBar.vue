@@ -44,6 +44,29 @@
     color: #ff6b00;
 }
 
+.nav-item.active svg {
+    animation: scaleAnimation 0.5s linear forwards;
+}
+
+
+@keyframes scaleAnimation {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(0.4);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 .icon {
     font-size: 24px;
     font-style: normal;

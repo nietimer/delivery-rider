@@ -2,10 +2,11 @@
     <div class="profile-container">
         <div class="profile-header">
             <div class="avatar">
-                <img src="../../assets/default-avatar.webp" alt="骑手头像">
+                <img src="../../assets/img/default-avatar.webp" alt="骑手头像">
             </div>
             <div class="info">
                 <h2>骑手: {{ userName }}</h2>
+                <p>地址: {{ userCampusName }}</p>
                 <p>电话: {{ userTel }}</p>
             </div>
         </div>
@@ -22,6 +23,10 @@
         </div>
 
         <div class="menu-section">
+            <div class="menu-item">
+                <span>工作状态</span>
+                <el-switch v-model="workStatus" @change="changeWorkStatus"/>
+            </div>
             <div class="menu-item" @click="navigateTo('/profile/info')">
                 <span>我的信息</span>
                 <i>›</i>
@@ -41,9 +46,13 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { changeUserWorkStatus } from '../../request/user'
 import { useUserStore } from '../../../stores/user'
+import { useOrderStore } from '../../../stores/order'
 
-const { userName, userTel, userMoney, completeOrder } = storeToRefs(useUserStore())
+const { userId, userName, userTel, userMoney, userCampusName, workStatus } = storeToRefs(useUserStore())
+const { completeOrder } = storeToRefs(useOrderStore())
+
 const router = useRouter()
 
 const navigateTo = (path) => {
@@ -53,6 +62,13 @@ const navigateTo = (path) => {
 const handleLogout = () => {
     localStorage.removeItem('riderToken')
     router.push('/login')
+}
+
+const changeWorkStatus =  async () => {
+    const res = await changeUserWorkStatus(userId.value, workStatus.value)
+    if(!res){
+        workStatus.value = !workStatus.value
+    }
 }
 </script>
 
@@ -65,7 +81,7 @@ const handleLogout = () => {
 .profile-header {
     display: flex;
     align-items: center;
-    padding: 15px;
+    padding: 10px 15px;
     background-color: #fff;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -73,8 +89,8 @@ const handleLogout = () => {
 }
 
 .avatar {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     overflow: hidden;
     margin-right: 20px;
@@ -89,6 +105,7 @@ const handleLogout = () => {
 .info h2 {
     margin-bottom: 8px;
     color: #333;
+    font-size: 20px;
 }
 
 .info p {
