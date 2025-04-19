@@ -25,11 +25,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login } from '../request/login'
-import { useUserStore } from '../../stores/user'
-import { useOrderStore } from '../../stores/order'
+import { getUserInfo } from '../request/user'
+import { setUserInfo } from '../../utils/userUtils'
 
-const { setLoginUserInfo } = useUserStore()
-const { setOrderNumber } = useOrderStore()
 const router = useRouter()
 const form = ref({
     userName: '',
@@ -40,20 +38,29 @@ const handleLogin = async () => {
     if (form.value.userName && form.value.password) {
         const data = await login(form.value.userName, form.value.password)
         if (data) {
-            localStorage.setItem('riderToken', JSON.stringify(data))
-            setLoginUserInfo({
-                userId: data.id,
-                userName: data.user_name,
-                userTel: data.phone,
-                userMoney: Number(data.balance),
-                userCampusId: data.campus_id,
-                userCampusName: data.campus_name,
-            })
-            setOrderNumber(Number(data.responsible), 0)
-            router.push('/delivery')
+            try {
+                localStorage.setItem('riderToken', JSON.stringify(data))
+                // setUserInfo(data)
+                const userInfo = await getUserInfo(data.id)
+                setUserInfo(userInfo)
+                router.push('/delivery')
+            } catch (error) {
+                ElMessage({
+                    message: "错误：" + error,
+                    type: 'error',
+                    duration: 4000
+                })
+                console.log(error)
+            }
         }
     }
 }
+
+// 如果有cookie就自动登录
+if (document.cookie) {
+    handleLogin()
+}
+
 </script>
 
 <style scoped>

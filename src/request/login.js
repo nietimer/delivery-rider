@@ -15,6 +15,11 @@ export async function login(userName, password) {
             return rider_info
         }
     } catch (err) {
+        ElMessage({
+            message: "错误：" + err,
+            type: 'error',
+            duration: 4000
+        })
         console.log(err)
     }
 }

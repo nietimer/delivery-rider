@@ -8,6 +8,7 @@ export const useUserStore = defineStore('user', () => {
     const userMoney = ref(0);
     const userCampusId = ref('');
     const userCampusName = ref('');
+    const responsible = ref(false);
     const workStatus = ref(false);
 
     function setUserInfo(data) {
@@ -22,6 +23,8 @@ export const useUserStore = defineStore('user', () => {
         userMoney.value = data.userMoney ? data.userMoney : userMoney.value;
         userCampusId.value = data.userCampusId ? data.userCampusId : userCampusId.value;
         userCampusName.value = data.userCampusName ? data.userCampusName : userCampusName.value;
+        responsible.value = data.responsible ? data.responsible : responsible.value;
+        workStatus.value = data.workStatus ? data.workStatus : workStatus.value;
     }
     return {
         userId,
@@ -30,6 +33,7 @@ export const useUserStore = defineStore('user', () => {
         userMoney,
         userCampusName,
         workStatus,
+        responsible,
         setUserInfo,
         setLoginUserInfo
     };

@@ -53,6 +53,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const isAuthenticated = localStorage.getItem('riderToken')
+    // 原 - 判断stroage是否为空 - 通过id获取
+    // 改 - 判断session是否过期 - 通过session获取
     if (to.meta.requiresAuth && !isAuthenticated) {
         next('/login')
     } else {

@@ -27,6 +27,18 @@ export const useOrderStore = defineStore('order', () => {
         //     fee: '8.5'
         // },
         // {
+        //     id: 2,
+        //     status: 'pending',
+        //     orderNo: 'ORD20230002',
+        //     restaurant: '麦当劳(人民广场店)',
+        //     customer: '张先生',
+        //     address: '人民广场地铁站1号口',
+        //     distance: '1.2km',
+        //     time: '15:30',
+        //     userTel: '1323456789',
+        //     fee: '8.5'
+        // },
+        // {
         //     id: 3,
         //     status: 'completed',
         //     orderNo: 'ORD20230003',
@@ -94,38 +106,38 @@ export const useOrderStore = defineStore('order', () => {
         //     distance: '2.1km',
         //     time: '14:15',
         // })
-        const _state = state == "ongoing" ? 1 : 2;
-        const page = state == "ongoing" ? ongoingPage : completedPage;
-        try {
-            const userInfo = JSON.parse(localStorage.getItem('riderToken'))
-            const data = await getOrderList(userInfo.id, _state, page);
-            setOrderNumber(data.rider_order_count - data.unsent_num, data.unsent_num)
-            console.log(data.rider_order)
-            if (data.rider_order.length != 0) {
-                if (state == "ongoing") {
-                    ongoingPage += 1
-                } else if (state == "completed") {
-                    completedPage += 1
-                }
-                data.rider_order.forEach(item => {
-                    orders.value.push({
-                        id: item.id,
-                        status: item.status == "1" ? 'ongoing' : 'completed',
-                        orderNo: item.order_number,
-                        restaurant: item.order.store_name,
-                        customer: item.order.delivery_name,
-                        address: item.order.delivery_address,
-                        userTel: item.order.delivery_phone,
-                        time: item.create_time,
-                        fee: "1"
-                    })
-                });
-            }
-            return false;
-        } catch (e) {
-            console.log(e);
-            return false;
-        }
+        // const _state = state == "ongoing" ? 1 : 2;
+        // const page = state == "ongoing" ? ongoingPage : completedPage;
+        // try {
+        //     const userInfo = JSON.parse(localStorage.getItem('riderToken'))
+        //     const data = await getOrderList(userInfo.id, _state, page);
+        //     setOrderNumber(data.rider_order_count - data.unsent_num, data.unsent_num)
+        //     // console.log(data.rider_order)
+        //     if (data.rider_order.length != 0) {
+        //         if (state == "ongoing") {
+        //             ongoingPage += 1
+        //         } else if (state == "completed") {
+        //             completedPage += 1
+        //         }
+        //         data.rider_order.forEach(item => {
+        //             orders.value.push({
+        //                 id: item.id,
+        //                 status: item.status == "1" ? 'ongoing' : 'completed',
+        //                 orderNo: item.order_number,
+        //                 restaurant: item.order.store_name,
+        //                 customer: item.order.delivery_name,
+        //                 address: item.order.delivery_address,
+        //                 userTel: item.order.delivery_phone,
+        //                 time: item.create_time,
+        //                 fee: "1"
+        //             })
+        //         });
+        //     }
+        //     return false;
+        // } catch (e) {
+        //     console.log(e);
+        //     return false;
+        // }
 
     }
 

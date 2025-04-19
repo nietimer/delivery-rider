@@ -18,9 +18,12 @@
             <button class="action-btn complete" @click="$emit('complete', order.id)" v-if="order.status === 'ongoing'">
                 完成
             </button>
-            <a class="action-btn call" :href="`tel:${order.userTel}`">
+            <a class="action-btn call" :href="`tel:${order.userTel}`" v-if="order.status === 'ongoing'">
                 联系客户
             </a>
+            <button class="action-btn accept" @click="$emit('accept', order.id)" v-if="order.status === 'pending'">
+                接单
+            </button>
         </div>
     </div>
 </template>
@@ -41,11 +44,11 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['complete'])
+const emit = defineEmits(['complete', 'accept'])
 
 const statusText = computed(() => {
     const statusMap = {
-        // 'pending': '待接单',
+        'pending': '待接单',
         'ongoing': '配送中',
         'completed': '已完成'
     }
@@ -109,6 +112,7 @@ const toOrderDetails = () => {
     background-color: white;
     border-radius: 8px;
     padding: 15px;
+    border: 1px solid rgb(0 0 0 / 5%);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -184,5 +188,11 @@ const toOrderDetails = () => {
     color: #333;
     text-align: center;
     text-decoration: none;
+}
+
+.accept {
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
 }
 </style>

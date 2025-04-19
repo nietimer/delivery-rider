@@ -3,17 +3,17 @@
     <div class="withdraw-container">
         <div class="balance-card">
             <h2>可用余额</h2>
-            <div class="balance-amount">¥ {{ balance.toFixed(2) }}</div>
+            <div class="balance-amount">¥ {{ userMoney.toFixed(2) }}</div>
         </div>
 
         <div class="withdraw-form">
             <h3>提现金额</h3>
             <div class="input-group">
                 <span class="currency-symbol">¥</span>
-                <input v-model="withdrawAmount" type="number" placeholder="输入提现金额" :max="balance" min="0"
+                <input v-model="withdrawAmount" type="number" placeholder="输入提现金额" :max="userMoney" min="0"
                     @input="validateAmount" />
             </div>
-            <div class="hint">可提现余额 ¥{{ balance.toFixed(2) }}</div>
+            <div class="hint">可提现余额 ¥{{ userMoney.toFixed(2) }}</div>
 
             <button class="withdraw-btn" :disabled="!isValidAmount || isProcessing" @click="handleWithdraw">
                 <span v-if="!isProcessing">立即提现</span>
@@ -26,26 +26,27 @@
 <script setup>
 import { ref, computed } from 'vue'
 import BackHeader from '../../components/BackHeader.vue'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '../../../stores/user'
+import { withdraw } from '../../request/user'
 
-const { userMoney } = useUserStore()
+const { userId, userMoney } = storeToRefs(useUserStore())
 
 // 用户余额数据
-const balance = ref(userMoney)
 const withdrawAmount = ref('')
 const isProcessing = ref(false)
 
 // 验证金额是否有效
 const isValidAmount = computed(() => {
     const amount = parseFloat(withdrawAmount.value)
-    return amount > 0 && amount <= balance.value
+    return amount > 0 && amount <= userMoney.value
 })
 
 // 金额输入验证
 const validateAmount = () => {
     const amount = parseFloat(withdrawAmount.value)
-    if (amount > balance.value) {
-        withdrawAmount.value = balance.value
+    if (amount > userMoney.value) {
+        withdrawAmount.value = userMoney.value
     } else if (amount < 0) {
         withdrawAmount.value = ''
     }
@@ -58,10 +59,12 @@ const handleWithdraw = async () => {
     isProcessing.value = true
     try {
         // 这里模拟API调用
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        balance.value -= parseFloat(withdrawAmount.value)
-        withdrawAmount.value = ''
-        alert('提现申请已提交，请等待处理')
+
+        const res = await withdraw(userId.value, withdrawAmount.value)
+        if (res) {
+            userMoney.value -= parseFloat(withdrawAmount.value)
+            withdrawAmount.value = ''
+        }
     } finally {
         isProcessing.value = false
     }

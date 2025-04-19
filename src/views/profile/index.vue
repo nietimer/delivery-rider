@@ -13,7 +13,7 @@
 
         <div class="stats-section">
             <div class="stat-card">
-                <div class="stat-value">{{ completeOrder }}</div>
+                <div class="stat-value">{{ responsible }}</div>
                 <div class="stat-label">累计配送</div>
             </div>
             <div class="stat-card">
@@ -48,10 +48,8 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { changeUserWorkStatus } from '../../request/user'
 import { useUserStore } from '../../../stores/user'
-import { useOrderStore } from '../../../stores/order'
 
-const { userId, userName, userTel, userMoney, userCampusName, workStatus } = storeToRefs(useUserStore())
-const { completeOrder } = storeToRefs(useOrderStore())
+const { userId, userName, userTel, userMoney, userCampusName, workStatus, responsible } = storeToRefs(useUserStore())
 
 const router = useRouter()
 

@@ -2,7 +2,7 @@ import http from './index'
 
 export async function getOrderList(riderId, status, page) {
     try {
-        const data = await http.get('/api/rider/get_rider_oderList', {
+        const data = await http.post('/api/rider/get_rider_oderList', {
             rider_id: riderId,
             status,
             page,

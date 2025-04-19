@@ -2,7 +2,7 @@
     <div class="delivery-container">
         <div class="header">
             <h1>今日派送</h1>
-            <div class="stats">
+            <!-- <div class="stats">
                 <div class="stat-item">
                     <span class="stat-value">{{ completeOrder + ongoingOrder }}</span>
                     <span class="stat-label">总单数</span>
@@ -15,7 +15,7 @@
                     <span class="stat-value">{{ ongoingOrder }}</span>
                     <span class="stat-label">进行中</span>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="tabs">
@@ -52,6 +52,7 @@ const { orders, completeOrder, ongoingOrder } = storeToRefs(orderStore)
 const { fetchMoreOrders } = orderStore
 const activeTab = ref('ongoing')
 const tabs = ref([
+    // { id: 'pending', label: '待接单' },
     { id: 'ongoing', label: '进行中' },
     { id: 'completed', label: '已完成' }
 ])

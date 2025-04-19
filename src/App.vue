@@ -9,32 +9,33 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavBar from './components/NavBar.vue'
-import { useUserStore } from '../stores/user'
+import { useRouter } from 'vue-router'
+import { setUserInfo } from '../utils/userUtils'
+import { getUserInfo } from './request/user'
 
-const { setLoginUserInfo } = useUserStore()
-try {
-  const data = JSON.parse(localStorage.getItem('riderToken'))
-  if (data) {
-    setLoginUserInfo({
-      userId: data.id,
-      userName: data.user_name,
-      userTel: data.phone,
-      userMoney: Number(data.balance),
-      userCampusId: data.campus_id,
-      userCampusName: data.campus_name,
-      completeOrder: Number(data.responsible),
-      ongoingOrder: 0
+const router = useRouter()
+
+async function init() {
+  try {
+    const data = JSON.parse(localStorage.getItem('riderToken'))
+    if (data) {
+      // setUserInfo(data)
+      const userInfo = await getUserInfo(data.id)
+      setUserInfo(userInfo)
+    }
+  } catch (error) {
+    localStorage.removeItem('riderToken')
+    ElMessage({
+      message: "登录已失效，请重新登录",
+      type: 'warning',
+      duration: 4000
     })
+    router.push('/login')
+    console.log(error)
   }
-} catch (error) {
-  localStorage.removeItem('riderToken')
-  ElMessage({
-    message: "登录已失效，请重新登录",
-    type: 'warning',
-    duration: 4000
-  })
-  console.log(error)
 }
+
+init()
 const showNavArray = ['/delivery', '/profile']
 const route = useRoute()
 const showNav = computed(() => showNavArray.includes(route.path))
