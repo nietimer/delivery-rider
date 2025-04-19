@@ -3,7 +3,7 @@ import http from './index'
 // 修改工作状态
 export async function changeUserWorkStatus(riderId, status) {
     try {
-        const data = await http.post('/api/rider/updata_rider_status', {
+        const data = await http.post('/rider/updata_rider_status', {
             rider_id: riderId,
             status: status ? 1 : 0,
         })
@@ -24,7 +24,7 @@ export async function changeUserWorkStatus(riderId, status) {
 // 现金提现
 export async function withdraw(riderId, money) {
     try {
-        const data = await http.post('/api/rider/with_drawal', {
+        const data = await http.post('/rider/with_drawal', {
             rider_id: riderId,
             amount: money,
         })
@@ -44,7 +44,7 @@ export async function withdraw(riderId, money) {
 // 获取用户信息
 export async function getUserInfo(riderId) {
     try {
-        const data = await http.get('/api/rider/user_info', {
+        const data = await http.get('/rider/user_info', {
             rider_id: riderId
         })
         if (data.code === 200) {
@@ -58,7 +58,7 @@ export async function getUserInfo(riderId) {
 // 修改用户信息
 export async function editUserInfo(userId, data) {
     try {
-        const _data = await http.post('/api/rider/edit_user_info', {
+        const _data = await http.post('/rider/edit_user_info', {
             rider_id: userId,
             ...data
         })

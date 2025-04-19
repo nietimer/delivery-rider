@@ -28,7 +28,9 @@
         <div class="delivery-list" ref="listContainer">
             <DeliveryCard v-for="order in filteredOrders" :key="order.id" :order="order"
                 @complete="handleCompleteOrder" />
-
+            <div class="no-data" v-if="!filteredOrders.length && !loading">
+                无订单
+            </div>
             <!-- 加载状态指示器 -->
             <div v-if="loading" class="loading-indicator">
                 加载中<span class="loader"></span>
@@ -46,10 +48,11 @@ import DeliveryCard from '../components/DeliveryCard.vue'
 import { storeToRefs } from 'pinia'
 import { useOrderStore } from '../../stores/order'
 import { orderConfirm } from '../request/order'
+import { ca } from 'element-plus/es/locales.mjs'
 
 const orderStore = useOrderStore()
 const { orders, completeOrder, ongoingOrder } = storeToRefs(orderStore)
-const { fetchMoreOrders } = orderStore
+const { fetchMoreOrders, initOrders } = orderStore
 const activeTab = ref('ongoing')
 const tabs = ref([
     // { id: 'pending', label: '待接单' },
@@ -70,9 +73,19 @@ const handleCompleteOrder = (orderId) => {
     const order = orders.value.find(o => o.id === orderId)
     if (order) {
         order.status = 'completed'
-        orderConfirm(orderId).then(() => {
-            ongoingOrder.value--
-            completeOrder.value++
+        orderConfirm(orderId).then((data) => {
+            if (data.code == 200) {
+                ElMessage({
+                    message: "已完成订单",
+                    type: 'success',
+                    duration: 4000
+                })
+                initOrders()
+                fetchMoreOrders("ongoing")
+                fetchMoreOrders("completed")
+            }
+            // ongoingOrder.value--
+            // completeOrder.value++
         })
     }
 }
@@ -101,11 +114,20 @@ const loadMoreData = async () => {
 }
 
 // 添加滚动事件监听
-onMounted(() => {
+onMounted(async () => {
     listContainer.value.addEventListener('scroll', checkScroll)
-    // 初始加载数据
-    fetchMoreOrders("ongoing")
-    fetchMoreOrders("completed")
+    loading.value = true
+    try {
+        // 初始加载数据
+        initOrders()
+        await fetchMoreOrders("ongoing")
+        await fetchMoreOrders("completed")
+    } catch (error) {
+        console.error('初始加载数据失败:', error)
+    } finally {
+        loading.value = false
+
+    }
 })
 
 // 移除滚动事件监听
@@ -217,5 +239,11 @@ onUnmounted(() => {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #999;
 }
 </style>

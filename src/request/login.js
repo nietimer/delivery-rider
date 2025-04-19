@@ -2,7 +2,7 @@ import http from './index'
 
 export async function login(userName, password) {
     try {
-        const { code, msg, rider_info } = await http.post('/api/rider/login', {
+        const { code, msg, rider_info } = await http.post('/rider/login', {
             user_name: userName,
             password: password
         })

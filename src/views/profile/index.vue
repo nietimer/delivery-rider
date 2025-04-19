@@ -25,7 +25,7 @@
         <div class="menu-section">
             <div class="menu-item">
                 <span>工作状态</span>
-                <el-switch v-model="workStatus" @change="changeWorkStatus"/>
+                <el-switch v-model="workStatus" @change="changeWorkStatus" />
             </div>
             <div class="menu-item" @click="navigateTo('/profile/info')">
                 <span>我的信息</span>
@@ -48,23 +48,48 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { changeUserWorkStatus } from '../../request/user'
 import { useUserStore } from '../../../stores/user'
+import { getUserInfo } from '../../request/user'
+import { setUserInfo } from '../../../utils/userUtils'
 
 const { userId, userName, userTel, userMoney, userCampusName, workStatus, responsible } = storeToRefs(useUserStore())
 
 const router = useRouter()
+
+// 每次重新进用户页面都从后台刷新数据
+async function initUserInfo() {
+    try {
+        const data = JSON.parse(localStorage.getItem('riderToken'))
+        if (data) {
+            // setUserInfo(data)
+            const userInfo = await getUserInfo(data.id)
+            setUserInfo(userInfo)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+initUserInfo()
 
 const navigateTo = (path) => {
     router.push(path)
 }
 
 const handleLogout = () => {
+    let cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
     localStorage.removeItem('riderToken')
     router.push('/login')
 }
 
-const changeWorkStatus =  async () => {
+const changeWorkStatus = async () => {
     const res = await changeUserWorkStatus(userId.value, workStatus.value)
-    if(!res){
+    if (!res) {
         workStatus.value = !workStatus.value
     }
 }

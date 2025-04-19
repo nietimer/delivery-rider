@@ -21,7 +21,7 @@ export default defineConfig({
     port: 80,
     proxy: {
       '/api': {
-        target: 'https://wmgl.0898yzzx.com',//目标服务器地址
+        target: 'https://wmgl.0898yzzx.com/api',//目标服务器地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },

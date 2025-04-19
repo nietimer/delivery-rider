@@ -21,8 +21,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import BackHeader from '../../components/BackHeader.vue';
 import { useUserStore } from '../../../stores/user';
-import { editUserInfo, getUserInfo } from '../../request/user';
-import { setUserInfo } from '../../../utils/userUtils';
+import { editUserInfo } from '../../request/user';
 
 const { userId, userName, userTel } = useUserStore();
 const router = useRouter();
@@ -36,12 +35,9 @@ const phone = ref(initialPhone);
 
 const saveInfo = async () => {
     // 这里可以添加保存信息到后端的逻辑
-    console.log('保存的昵称:', nickname.value);
-    console.log('保存的电话:', phone.value);
+    // console.log('保存的昵称:', nickname.value);
+    // console.log('保存的电话:', phone.value);
     editUserInfo(userId, { user_name: nickname.value, phone: phone.value });
-    localStorage.setItem('riderToken', JSON.stringify(data))
-    const userInfo = await getUserInfo(data.id)
-    setUserInfo()
     router.go(-1);
 };
 

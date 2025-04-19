@@ -2,7 +2,7 @@ import http from './index'
 
 export async function getOrderList(riderId, status, page) {
     try {
-        const data = await http.post('/api/rider/get_rider_oderList', {
+        const data = await http.post('/rider/get_rider_oderList', {
             rider_id: riderId,
             status,
             page,
@@ -18,7 +18,7 @@ export async function getOrderList(riderId, status, page) {
 // 完成订单
 export async function orderConfirm(orderId) {
     try {
-        const data = await http.post('/api/rider/order_confirm', {
+        const data = await http.post('/rider/order_confirm', {
             order_id: orderId
         })
         if (data.code === 200) {

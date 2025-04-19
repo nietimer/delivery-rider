@@ -17,14 +17,14 @@ export const useUserStore = defineStore('user', () => {
     }
 
     function setLoginUserInfo(data){
-        userId.value = data.userId ? data.userId : userId.value;
-        userName.value = data.userName ? data.userName : userName.value;
-        userTel.value = data.userTel ? data.userTel : userTel.value;
-        userMoney.value = data.userMoney ? data.userMoney : userMoney.value;
-        userCampusId.value = data.userCampusId ? data.userCampusId : userCampusId.value;
-        userCampusName.value = data.userCampusName ? data.userCampusName : userCampusName.value;
-        responsible.value = data.responsible ? data.responsible : responsible.value;
-        workStatus.value = data.workStatus ? data.workStatus : workStatus.value;
+        userId.value = data.userId != undefined ? data.userId : userId.value;
+        userName.value = data.userName != undefined ? data.userName : userName.value;
+        userTel.value = data.userTel != undefined ? data.userTel : userTel.value;
+        userMoney.value = data.userMoney != undefined ? data.userMoney : userMoney.value;
+        userCampusId.value = data.userCampusId != undefined ? data.userCampusId : userCampusId.value;
+        userCampusName.value = data.userCampusName != undefined ? data.userCampusName : userCampusName.value;
+        responsible.value = data.responsible != undefined ? data.responsible : responsible.value;
+        workStatus.value = data.workStatus != undefined ? data.workStatus : workStatus.value;
     }
     return {
         userId,
